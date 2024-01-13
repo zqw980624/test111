@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yami.trading.dao.chat.MessageUserMapper">
+
+	<sql id="messageUserColumns">
+		a.UUID AS "uuid",
+		a.PARTY_ID AS "partyId",
+		a.TOTAL_MSG AS "totalMsg",
+		a.USER_UNREADMSG AS "userUnreadmsg",
+		a.CUSTOMER_UNREADMSG AS "customerUnreadmsg",
+		a.UPDATETIME AS "updatetime",
+		a.DELETE_STATUS AS "deleteStatus",
+		a.REMARKS AS "remarks",
+		a.IP AS "ip",
+		a.TARGET_USERNAME AS "targetUsername",
+		a.create_time_ts AS "createTimeTs",
+		a.del_flag AS "delFlag"
+	</sql>
+
+	<sql id="messageUserJoins">
+
+	</sql>
+
+
+
+</mapper>

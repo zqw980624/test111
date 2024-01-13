@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yami.trading.dao.user.WithdrawMapper">
+
+  <select id="listRecord" resultType="com.yami.trading.bean.user.dto.WithdrawDto">
+      SELECT
+      party.role_name,
+      party.user_code,
+      party.user_name,
+      withdraw.remarks remarks,
+      withdraw.uuid id,
+      withdraw.order_no order_no,
+      withdraw.create_time createtime,
+      withdraw.failure_msg failure_msg,
+      withdraw.amount amount,
+      withdraw.`status`,
+      withdraw.review_time ,
+      withdraw.bank bank,
+      withdraw.deposit_bank deposit_bank,
+      withdraw.currency currency,
+      withdraw.amount_fee amount_fee,
+      withdraw.method method,
+      withdraw.qdcode qdcode,
+      withdraw.address ,
+      withdraw.time_settle time_settle,
+      withdraw.account account,
+      withdraw.username username,
+      withdraw.names names,
+      withdraw.volume volume,
+      withdraw.tx,
+      ur.user_name userNameParent
+      FROM
+      tz_withdraw_order withdraw
+      LEFT JOIN tz_user party ON withdraw.user_id = party.user_id
+      LEFT JOIN tz_user ur ON ur.user_id = party.user_recom
+      WHERE
+      1 =1
+        <if test="roleName!=null and roleName!=''">
+             and party.role_name=#{roleName}
+        </if>
+
+      <if test="status!=null and status!=''">
+          and withdraw.status=#{status}
+      </if>
+
+      <if test="orderNo!=null and orderNo!=''">
+          and withdraw.order_no=#{orderNo}
+      </if>
+      <if test="userName!=null and userName!=''">
+          and party.user_name=#{userName} or party.user_code=#{userName}
+      </if>
+      order by withdraw.create_time desc
+  </select>
+
+
+    <select id="listRecords" resultType="com.yami.trading.bean.user.dto.WithdrawDto">
+        SELECT
+        party.role_name,
+        party.user_code,
+        party.user_name,
+        withdraw.remarks remarks,
+        withdraw.uuid id,
+        withdraw.order_no order_no,
+        withdraw.create_time createtime,
+        withdraw.failure_msg failure_msg,
+        withdraw.amount amount,
+        withdraw.`status`,
+        withdraw.review_time ,
+        withdraw.bank bank,
+        withdraw.deposit_bank deposit_bank,
+        withdraw.currency currency,
+        withdraw.amount_fee amount_fee,
+        withdraw.method method,
+        withdraw.qdcode qdcode,
+        withdraw.address ,
+        withdraw.time_settle time_settle,
+        withdraw.account account,
+        withdraw.username username,
+        withdraw.names names,
+        withdraw.volume volume,
+        withdraw.tx,
+        ur.user_name userNameParent
+        FROM
+        tz_withdraw_order withdraw
+        LEFT JOIN tz_user party ON withdraw.user_id = party.user_id
+        LEFT JOIN tz_user ur ON ur.user_id = party.user_recom
+        WHERE
+        1 =1
+        <if test="roleName!=null and roleName!=''">
+            and party.role_name=#{roleName}
+        </if>
+
+        <if test="status!=null and status!=''">
+            and withdraw.status=#{status}
+        </if>
+
+        <if test="orderNo!=null and orderNo!=''">
+            and withdraw.order_no=#{orderNo}
+        </if>
+        <if test="userName!=null and userName!=''">
+            and party.user_name=#{userName} or party.user_code=#{userName}
+        </if>
+        <if test="qdcode!=null and qdcode!=''">
+            and withdraw.qdcode=#{qdcode}
+        </if>
+        order by withdraw.create_time desc
+    </select>
+</mapper>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yami.trading.dao.contract.ContractApplyOrderMapper">
+
+	<sql id="contractApplyOrderColumns">
+		a.UUID AS "uuid",
+		a.PARTY_ID AS "partyId",
+		a.SYMBOL AS "symbol",
+		a.ORDER_NO AS "orderNo",
+		a.DIRECTION AS "direction",
+		a.OFFSET AS "offset",
+		a.VOLUME AS "volume",
+		a.VOLUME_OPEN AS "volumeOpen",
+		a.LEVER_RATE AS "leverRate",
+		a.PRICE AS "price",
+		a.STOP_PRICE_PROFIT AS "stopPriceProfit",
+		a.STOP_PRICE_LOSS AS "stopPriceLoss",
+		a.ORDER_PRICE_TYPE AS "orderPriceType",
+		a.STATE AS "state",
+		a.UNIT_AMOUNT AS "unitAmount",
+		a.FEE AS "fee",
+		a.DEPOSIT AS "deposit",
+		a.create_by AS "createBy",
+		a.create_time AS "createTime",
+		a.update_by AS "updateBy",
+		a.update_time AS "updateTime",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag",
+		a.create_time_ts AS "createTimeTs",
+		a.update_time_ts AS "updateTimeTs"
+
+
+	</sql>
+
+	<sql id="contractApplyOrderJoins">
+
+	</sql>
+
+	<select id="listRecord" resultType="com.yami.trading.bean.contract.dto.ContractApplyOrderDTO" >
+		select *,b.role_name AS "roleName", b.user_code AS "userCode",item.name AS "symbolName" from t_contract_apply_order a left join tz_user b on a.PARTY_ID = b.user_id
+		left join t_item item on a.symbol = item.SYMBOL
+		<where>
+			<if test="query.type!=null and query.type!=''">
+				and item.type=#{query.type}
+			</if>
+		<if test="query.orderNo!=null and query.orderNo!=''">
+			and a.order_no=#{query.orderNo}
+		</if>
+			<if test="query.children != null and query.children.size() >0">
+				AND a.party_id in
+				<foreach collection="query.children" item="item" index="index" open="(" close=")" separator=",">
+					#{item}
+				</foreach>
+			</if>
+		<if test="query.state!=null and query.state!=''">
+			and a.state=#{query.state}
+		</if>
+		<if test="query.userId!=null and query.userId!=''">
+			and b.user_id=#{query.userId}
+		</if>
+			<if test="query.userCode!=null and query.userCode!=''">
+				and b.user_code=#{query.userCode}
+			</if>
+			<if test="query.roleName!=null and query.roleName!=''">
+				and b.role_name=#{query.roleName}
+			</if>
+
+		<if test="query.ip!=null and query.ip!=''">
+			and b.user_lastip like CONCAT('%', #{query.ip}, '%')
+		</if>
+		<if test="query.userName!=null and query.userName!=''">
+			AND  (b.user_name like CONCAT('%', #{query.userName}, '%') or b.user_code like CONCAT('%', #{query.userName}, '%'))
+		</if>
+		</where>
+		order by a.create_time desc
+	</select>
+
+
+	<select id="findById" resultType="com.yami.trading.bean.contract.dto.ContractApplyOrderDTO">
+		SELECT
+			<include refid="contractApplyOrderColumns"/>
+		FROM t_contract_apply_order a
+		<include refid="contractApplyOrderJoins"/>
+		WHERE a.uuid = #{id} and a.del_flag = 0
+	</select>
+
+	<select id="findList" resultType="com.yami.trading.bean.contract.dto.ContractApplyOrderDTO">
+		SELECT
+			<include refid="contractApplyOrderColumns"/>
+		FROM t_contract_apply_order a
+		<include refid="contractApplyOrderJoins"/>
+	    ${ew.customSqlSegment}
+	</select>
+
+
+</mapper>

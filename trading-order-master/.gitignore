@@ -1,0 +1,46 @@
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+*.lock
+rebel.xml
+
+### NetBeans ###
+nbproject/private/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+### maven ###
+target/
+*.war
+*.ear
+*.zip
+*.tar
+*.tar.gz
+
+### logs ####
+/logs/
+*.log
+
+### temp ignore ###
+*.cache
+*.diff
+*.patch
+*.tmp
+*.java~
+*.properties~
+*.xml~
+
+### system ignore ###
+.DS_Store
+Thumbs.db
+Servers
+.metadata
+upload
+gen_code
+
+### node ###
+node_modules

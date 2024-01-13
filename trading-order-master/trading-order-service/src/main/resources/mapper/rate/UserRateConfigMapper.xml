@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yami.trading.dao.rate.UserRateConfigMapper">
+
+	<sql id="userRateConfigColumns">
+		a.UUID AS "uuid",
+		a.OUT_OR_IN AS "outOrIn",
+		a.CURRENCY AS "currency",
+		a.PARTY_ID AS "partyId"
+	</sql>
+
+	<sql id="userRateConfigJoins">
+
+	</sql>
+
+
+
+	<select id="findById" resultType="com.yami.trading.bean.rate.dto.UserRateConfigDTO">
+		SELECT
+			<include refid="userRateConfigColumns"/>
+		FROM t_user_rate_config a
+		<include refid="userRateConfigJoins"/>
+		WHERE a.uuid = #{id} and a.del_flag = 0
+	</select>
+
+	<select id="findList" resultType="com.yami.trading.bean.rate.dto.UserRateConfigDTO">
+		SELECT
+			<include refid="userRateConfigColumns"/>
+		FROM t_user_rate_config a
+		<include refid="userRateConfigJoins"/>
+	    ${ew.customSqlSegment}
+	</select>
+
+
+</mapper>

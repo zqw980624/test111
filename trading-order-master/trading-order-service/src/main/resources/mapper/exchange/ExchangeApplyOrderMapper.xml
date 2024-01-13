@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yami.trading.dao.exchange.ExchangeApplyOrderMapper">
+  <select id="listPage" resultType="com.yami.trading.bean.exchange.dto.ExchangeApplyOrderDto">
+      select
+      orders.uuid id,
+      party.user_code,
+      party.role_name,
+      orders.symbol symbol,
+      orders.order_no order_no,
+      orders.off_set offset,
+      orders.volume volume,
+      orders.create_time createtime,
+      orders.close_time closetime,
+      orders.state state,
+      orders.order_price_type order_price_type,
+      orders.close_price close_price,
+      orders.price price,
+      orders.pid pid,
+      item.name itemname,
+      orders.is_trigger_order is_trigger_order,
+      orders.trigger_price trigger_price,
+      party.user_name ,
+      ur.user_name username_parent
+      from
+      t_exchange_apply_order orders
+      left join tz_user  party on orders.party_id = party.user_id
+      left join  tz_user ur on ur.user_id = party.user_recom
+      left join  t_item item on item.symbol = orders.symbol
+      where
+      1 =1
+        <if test="rolename!=null and rolename!=''">
+             and party.role_name=#{rolename}
+        </if>
+
+      <if test="symbolType!=null and symbolType!=''">
+          and item.type=#{symbolType}
+      </if>
+      <if test="userName!=null and userName!=''">
+          and party.user_name=#{userName} or party.user_code=#{userName}
+      </if>
+
+      <if test="userCode!=null and userCode!=''">
+          and party.user_code=#{userCode}
+      </if>
+      <if test="orderNo!=null and orderNo!=''">
+          and orders.order_no=#{orderNo}
+      </if>
+      <if test="symbol!=null and symbol!=''">
+          and orders.symbol=#{symbol}
+      </if>
+      <if test="state!=null and state!=''">
+          and orders.state=#{state}
+      </if>
+      <if test="offset!=null and offset!=''">
+          and orders.offset=#{offset}
+      </if>
+         order by orders.create_time desc
+  </select>
+
+    <select id="listPages" resultType="com.yami.trading.bean.exchange.dto.ExchangeApplyOrderDto">
+        select
+        orders.uuid id,
+        party.user_code,
+        party.role_name,
+        orders.symbol symbol,
+        orders.order_no order_no,
+        orders.off_set offset,
+        orders.volume volume,
+        orders.create_time createtime,
+        orders.close_time closetime,
+        orders.state state,
+        orders.order_price_type order_price_type,
+        orders.close_price close_price,
+        orders.price price,
+        orders.pid pid,
+        item.name itemname,
+        orders.is_trigger_order is_trigger_order,
+        orders.trigger_price trigger_price,
+        party.user_name ,
+        party.recom_code recomCode,
+        ur.user_name username_parent
+        from
+        t_exchange_apply_order orders
+        left join tz_user  party on orders.party_id = party.user_id
+        left join  tz_user ur on ur.user_id = party.user_recom
+        left join  t_item item on item.symbol = orders.symbol
+        where
+        1 =1
+        <if test="rolename!=null and rolename!=''">
+            and party.role_name=#{rolename}
+        </if>
+
+        <if test="symbolType!=null and symbolType!=''">
+            and item.type=#{symbolType}
+        </if>
+        <if test="userName!=null and userName!=''">
+            and party.user_name=#{userName} or party.user_code=#{userName}
+        </if>
+        <if test="userCode!=null and userCode!=''">
+            and party.user_code=#{userCode}
+        </if>
+        <if test="orderNo!=null and orderNo!=''">
+            and orders.order_no=#{orderNo}
+        </if>
+        <if test="symbol!=null and symbol!=''">
+            and orders.symbol=#{symbol}
+        </if>
+        <if test="state!=null and state!=''">
+            and orders.state=#{state}
+        </if>
+        <if test="offset!=null and offset!=''">
+            and orders.offset=#{offset}
+        </if>
+        <if test="recomCode!=null and recomCode!=''">
+            and party.recom_code=#{recomCode}
+        </if>
+        order by orders.create_time desc
+    </select>
+</mapper>

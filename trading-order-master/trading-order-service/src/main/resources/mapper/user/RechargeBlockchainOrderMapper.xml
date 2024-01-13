@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yami.trading.dao.user.RechargeBlockchainOrderMapper">
+
+  <select id="listRecord" resultType="com.yami.trading.bean.user.dto.RechargeBlockchainOrderDto">
+      SELECT hl.*,u.user_name,u.user_code,u.role_name,
+             u.user_id,
+             hl.succeeded as 'status',
+      ur.user_name AS 'recomUserName',
+      ur.user_code AS 'recomUserCode',
+      hl.created as  'createTime'
+      FROM t_recharge_blockchain_order   hl
+      LEFT JOIN  tz_user  u ON  hl.party_id=u.user_id
+      LEFT JOIN tz_user ur ON u.user_recom=ur.user_id
+           where 1=1
+        <if test="rolename!=null and rolename!=''">
+             and u.role_name=#{rolename}
+        </if>
+
+      <if test="startTime!=null and endTime!=null">
+          and hl.created BETWEEN #{startTime} and #{endTime}
+      </if>
+
+      <if test="orderNo!=null and orderNo!=''">
+          and hl.order_no=#{orderNo}
+      </if>
+      <if test="userName!=null and userName!=''">
+          and u.user_name=#{userName} or u.user_code=#{userName}
+      </if>
+      <if test="status!=null and status!=''">
+          and hl.succeeded= #{status}
+      </if>
+
+      order by hl.created desc
+  </select>
+
+    <select id="listRecords" resultType="com.yami.trading.bean.user.dto.RechargeBlockchainOrderDto">
+        SELECT hl.*,u.user_name,u.user_code,u.role_name,
+        u.user_id,
+        hl.succeeded as 'status',
+        ur.user_name AS 'recomUserName',
+        ur.user_code AS 'recomUserCode',
+        hl.created as  'createTime'
+        FROM t_recharge_blockchain_order   hl
+        LEFT JOIN  tz_user  u ON  hl.party_id=u.user_id
+        LEFT JOIN tz_user ur ON u.user_recom=ur.user_id
+        where 1=1
+        <if test="rolename!=null and rolename!=''">
+            and u.role_name=#{rolename}
+        </if>
+
+        <if test="startTime!=null and endTime!=null">
+            and hl.created BETWEEN #{startTime} and #{endTime}
+        </if>
+
+        <if test="orderNo!=null and orderNo!=''">
+            and hl.order_no=#{orderNo}
+        </if>
+        <if test="userName!=null and userName!=''">
+            and u.user_name=#{userName} or u.user_code=#{userName}
+        </if>
+        <if test="status!=null and status!=''">
+            and hl.succeeded= #{status}
+        </if>
+        <if test="tx!=null and tx!=''">
+            and hl.tx= #{tx}
+        </if>
+        order by hl.created desc
+    </select>
+</mapper>

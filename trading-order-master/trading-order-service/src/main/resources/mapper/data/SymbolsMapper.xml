@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yami.trading.dao.data.SymbolsMapper">
+
+	<sql id="symbolsColumns">
+		a.UUID AS "uuid",
+		a.SYMBOL AS "symbol",
+		a.BASE_CURRENCY AS "baseCurrency",
+		a.QUOTE_CURRENCY AS "quoteCurrency",
+		a.PRICE_PRECISION AS "pricePrecision",
+		a.STATE AS "state",
+		a.LEVERAGE_RATIO AS "leverageRatio"
+	</sql>
+
+	<sql id="symbolsJoins">
+
+	</sql>
+
+
+
+	<select id="findById" resultType="com.yami.trading.bean.data.dto.SymbolsDTO">
+		SELECT
+			<include refid="symbolsColumns"/>
+		FROM t_symbols a
+		<include refid="symbolsJoins"/>
+		WHERE a.uuid = #{id} and a.del_flag = 0
+	</select>
+
+	<select id="findList" resultType="com.yami.trading.bean.data.dto.SymbolsDTO">
+		SELECT
+			<include refid="symbolsColumns"/>
+		FROM t_symbols a
+		<include refid="symbolsJoins"/>
+	    ${ew.customSqlSegment}
+	</select>
+
+
+</mapper>

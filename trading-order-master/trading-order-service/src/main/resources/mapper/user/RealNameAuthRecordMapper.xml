@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yami.trading.dao.user.RealNameAuthRecordMapper">
+
+  <select id="pageRecord" resultType="com.yami.trading.bean.user.dto.RealNameAuthDto">
+      SELECT rr.*,u.user_name,u.user_code,u.role_name,u.user_mobile,u.user_mail,
+      ur.user_name AS 'recomUserName',
+      ur.user_code AS 'recomUserCode' FROM tz_real_name_auth_record  rr
+      LEFT JOIN  tz_user  u ON  rr.user_id=u.user_id
+      LEFT JOIN tz_user ur ON u.user_recom=ur.user_id
+           where 1=1  and rr.del_flag=0
+        <if test="rolename!=null and rolename!=''">
+             and u.role_name=#{rolename}
+        </if>
+
+      <if test="status!=null and status!=''">
+          and rr.status=#{status}
+      </if>
+      <if test="userCode!=null and userCode!=''">
+          and (u.user_name=#{userCode} or u.user_code=#{userCode})
+      </if>
+      <if test="idNumber!=null and idNumber!=''">
+          and rr.id_number=#{idNumber}
+      </if>
+      order by rr.create_time desc
+  </select>
+
+    <select id="pageRecords" resultType="com.yami.trading.bean.user.dto.RealNameAuthDto">
+        SELECT rr.*,u.user_name,u.user_code,u.role_name,u.user_mobile,u.user_mail,
+        ur.user_name AS 'recomUserName',
+        ur.user_code AS 'recomUserCode' FROM tz_real_name_auth_record  rr
+        LEFT JOIN  tz_user  u ON  rr.user_id=u.user_id
+        LEFT JOIN tz_user ur ON u.user_recom=ur.user_id
+        where 1=1  and rr.del_flag=0 and
+        u.role_name in
+        <foreach collection="roleNames" separator="," index="index" open="(" close=")" item="r">
+            #{r}
+        </foreach>
+        <if test="checkedList!=null">
+            and u.user_id in
+            <foreach collection="checkedList" separator="," index="index" open="(" close=")" item="r">
+                #{r}
+            </foreach>
+        </if>
+        <if test="status!=null and status!=''">
+            and rr.status=#{status}
+        </if>
+        <if test="userCode!=null and userCode!=''">
+            and (u.user_name=#{userCode} or u.user_code=#{userCode})
+        </if>
+        <if test="idNumber!=null and idNumber!=''">
+            and rr.id_number=#{idNumber}
+        </if>
+        order by rr.create_time desc
+    </select>
+</mapper>

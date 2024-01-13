@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yami.trading.dao.agent.AgentMapper">
+
+    <select id="listTotal" resultType="com.yami.trading.bean.agent.AgentDto">
+        SELECT agent.UUID id,
+               u.user_name,
+               u.user_code,
+               u.role_name,
+               u.remarks,
+                u.status,
+                u.google_auth_bind,
+               user_parent.user_name userNameParent
+        FROM t_agent agent
+                 LEFT JOIN tz_user u ON agent.user_id = u.user_id
+                 LEFT JOIN tz_user user_parent ON agent.parent_user_id = user_parent.user_id
+        WHERE 1 = 1
+        <if test="userName!=null and userName!=''">
+            and u.user_name=#{userName} or u.user_code=#{userName}
+        </if>
+
+        order by  u.create_time desc
+    </select>
+  <!--  <select id="listTotalAge" resultType="com.yami.trading.bean.agent.AgentDto">
+        SELECT agent.UUID    id,
+        u.user_name,
+        u.user_code,
+        u.role_name,
+        u.remarks,
+        u.status,
+        u.google_auth_bind,
+        user_parent.user_name userNameParent
+        FROM t_agent agent
+        LEFT JOIN tz_user u ON agent.user_id = u.user_id
+        LEFT JOIN tz_user user_parent ON agent.parent_user_id = user_parent.user_id
+        WHERE 1 = 1
+        <if test="userName!=null and userName!=''">
+            and u.user_name=#{userName} or u.user_code=#{userName}
+        </if>
+
+        order by  u.create_time desc
+    </select>-->
+
+    <select id="pagedQueryNetwork"  resultType="com.yami.trading.bean.agent.AgentDto">
+        select party.role_name as rolename,
+               party.user_name as username,
+               party.user_code as usercode,
+               party.user_id   as id,
+               remarks,
+               enabled,
+               login_authority
+        from tz_user party
+                 left join tz_user_recom on party.user_id = tz_user_recom.recom_user_id
+        where 1 = 1
+          and party.role_name in ("agent", "agentlow")
+        order by party.create_time desc
+    </select>
+</mapper>

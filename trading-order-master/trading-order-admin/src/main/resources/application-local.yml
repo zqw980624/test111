@@ -1,0 +1,48 @@
+server:
+  port: 8085
+spring:
+  datasource:
+    url: jdbc:mysql://38.47.220.170:3306/trading_order?allowMultiQueries=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=GMT%2B8&nullCatalogMeansCurrent=true&rewriteBatchedStatements=true
+    username: root
+    password: 1940860e2152e9cc
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      minimum-idle: 0
+      maximum-pool-size: 20
+      idle-timeout: 10000
+      auto-commit: true
+      connection-test-query: SELECT 1
+  cache:
+    type: redis
+    redis:
+      cache-null-values: true
+  redis:
+    redisson:
+      config: classpath:redisson/redisson-local.yml
+    host: localhost
+    port: 6379
+    password: 123456
+logging:
+  config: classpath:logback/logback-local.xml
+
+
+jetcache:
+  statIntervalMinutes: 1
+  default: # 默认default，可以配置更多的area
+    type: linkedhashmap # 已支持可选：linkedhashmap、caffeine
+    keyConvertor: fastjson # key转换器
+  remote:
+    default:
+      # 缓存类型。tair、redis为当前支持的远程缓存
+      type: redis
+      keyConvertor: fastjson
+      # 采用Java序列化存储
+      valueEncoder: java
+      valueDecoder: java
+      poolConfig:
+        minIdle: 5
+        maxIdle: 20
+        maxTotal: 50
+      host: 127.0.0.1
+      port: 6379

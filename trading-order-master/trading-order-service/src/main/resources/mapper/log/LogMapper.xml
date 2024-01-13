@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yami.trading.dao.log.LogMapper">
+
+  <select id="listPage" resultType="com.yami.trading.bean.log.dto.LogDto">
+      SELECT l.*,u.user_name,u.user_code,u.role_name FROM t_log  l
+      LEFT JOIN  tz_user  u ON  l.user_id=u.user_id
+           where 1=1
+        <if test="rolename!=null and rolename!=''">
+             and u.role_name=#{rolename}
+        </if>
+      <if test="log!=null and log!=''">
+          and l.log  like  CONCAT('%', #{log}, '%')
+      </if>
+      <if test="category!=null and category!=''">
+          and l.category=#{category}
+      </if>
+
+      <if test="userName!=null and userName!=''">
+          and u.user_name=#{userName} or u.user_code=#{userName}
+      </if>
+
+      <if test="operator!=null and operator!=''">
+          and l.operator=#{operator}
+      </if>
+      order by l.create_time desc
+  </select>
+</mapper>

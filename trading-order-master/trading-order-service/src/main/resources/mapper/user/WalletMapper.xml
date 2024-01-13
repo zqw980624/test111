@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yami.trading.dao.user.WalletMapper">
+
+  <select id="sumMoney" resultType="java.math.BigDecimal">
+      SELECT IFNULL(SUM(w.MONEY),0) AS totle_money FROM tz_wallet w LEFT JOIN tz_user u ON u.user_id=w.user_id
+      WHERE 1=1 AND u.role_name ='MEMBER'
+  </select>
+
+    <select id="sumMoneyAgent" resultType="java.math.BigDecimal">
+        SELECT IFNULL(SUM(w.MONEY),0) AS totle_money FROM tz_wallet w LEFT JOIN tz_user u ON u.user_id=w.user_id
+        WHERE 1=1 AND u.role_name ='MEMBER'
+        <if test="userCode!=null and userCode!=''">
+        and u.recom_code =#{userCode}
+    </if>
+    </select>
+
+
+    <update id="updateWall" parameterType="com.yami.trading.bean.model.Wallet">
+        UPDATE tz_wallet
+        <set>
+            <if test ='null != money'>money = #{money}</if>
+        </set>
+        WHERE uuid = #{uuid}
+    </update>
+
+
+</mapper>

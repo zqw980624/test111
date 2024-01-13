@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yami.trading.dao.c2c.C2cAdvertMapper">
+
+
+    <select id="pagedQueryC2cUser" resultType="java.util.HashMap" >
+        select
+            advert.uuid id, advert.c2c_user_id c2c_user_id, advert.direction direction, advert.currency currency, advert.symbol symbol, advert.pay_type pay_type,
+            advert.symbol_value symbol_value, advert.coin_amount coin_amount, advert.investment_min investment_min, advert.investment_max investment_max,
+            advert.on_sale on_sale, advert.transaction_terms transaction_terms
+        from t_c2c_advert advert
+        where 1=1
+        <if test="c2cUserId!=null and c2cUserId!=''">
+                and advert.c2c_user_id =#{c2cUserId}
+        </if>
+        <if test="direction!=null and direction!=''">
+            and advert.direction = #{direction}
+        </if>
+        <if test="currency!=null and currency!=''">
+            and advert.currency = #{currency}
+        </if>
+        <if test="symbol!=null and symbol!=''">
+            and advert.symbol =#{symbol}
+        </if>
+
+        <if test="onSale!=null and onSale!=''">
+            and advert.on_sale =#{onSale}
+        </if>
+        <if test="closed!=null and closed!=''">
+            and advert.closed =#{closed}
+        </if>
+
+        <if test="amountDouble>0">
+            and (advert.coin_amount * advert.symbol_value)  &gt;=    #{amountDouble}
+        </if>
+
+        <choose>
+            <when test="direction=='buy'">
+                order by advert.symbol_value asc
+            </when>
+            <when test="direction='sell'">
+                order by advert.symbol_value desc
+            </when>
+            <otherwise>
+                order by advert.sort_index desc,advert.create_time desc
+            </otherwise>
+        </choose>
+
+    </select>
+
+
+    <select id="pagedQueryNotC2cUser" resultType="java.util.HashMap" >
+        select.
+        advert.uuid id, advert.c2c_user_id c2c_user_id, advert.direction direction, advert.currency currency, advert.symbol symbol, advert.pay_type pay_type,
+        advert.symbol_value symbol_value, advert.coin_amount coin_amount, advert.investment_min investment_min, advert.investment_max investment_max,
+        advert.on_sale on_sale, advert.transaction_terms transaction_terms, c2c_user.nick_name nick_name, c2c_user.head_img head_img,
+        c2c_user.thirty_days_order thirty_days_order, c2c_user.thirty_days_order_ratio thirty_days_order_ratio,
+        param_base_set.thirty_days_order thirty_days_order_base, param_base_set.thirty_days_order_ratio thirty_days_order_ratio_base
+        from t_c2c_advert advert
+        left join t_c2c_user c2c_user on c2c_user.uuid = advert.c2c_user_id
+        left join t_c2c_user_param_base_set param_base_set on c2c_user.c2c_user_party_id = param_base_set.c2c_user_party_id
+        where 1=1
+        <if test="c2cUserId!=null and c2cUserId!=''">
+            and advert.c2c_user_id =#{c2cUserId}
+        </if>
+        <if test="direction!=null and direction!=''">
+            and advert.direction = #{direction}
+        </if>
+        <if test="currency!=null and currency!=''">
+            and advert.currency = #{currency}
+        </if>
+        <if test="symbol!=null and symbol!=''">
+            and advert.symbol =#{symbol}
+        </if>
+
+        <if test="onSale!=null and onSale!=''">
+            and advert.on_sale =#{onSale}
+        </if>
+        <if test="closed!=null and closed!=''">
+            and advert.closed =#{closed}
+        </if>
+
+        <if test="amountDouble>0">
+            and (advert.coin_amount * advert.symbol_value)  &gt;=    #{amountDouble}
+        </if>
+
+        <choose>
+            <when test="direction=='buy'">
+                order by advert.symbol_value asc
+            </when>
+            <when test="direction='sell'">
+                order by advert.symbol_value desc
+            </when>
+            <otherwise>
+                order by advert.sort_index desc,advert.create_time desc
+            </otherwise>
+        </choose>
+    </select>
+
+
+    <select id="pagedQuery" resultType="java.util.HashMap">
+
+        SELECT
+        advert.uuid id,
+        advert.direction direction,
+        advert.currency currency,
+        advert.symbol symbol,
+        advert.symbol_close symbol_close,
+        advert.pay_rate pay_rate,
+        advert.pay_type pay_type,
+        advert.symbol_value symbol_value,
+        advert.coin_amount coin_amount,
+        advert.investment_min investment_min,
+        advert.investment_max investment_max,
+        advert.deposit deposit,
+        advert.deposit_open deposit_open,
+        advert.on_sale on_sale,
+        advert.closed closed,
+        advert.sort_index sort_index,
+        advert.expire_time expire_time,
+        advert.transaction_terms transaction_terms,
+        advert.order_msg order_msg,
+        advert.remark remark,
+        advert.create_time create_time,
+        advert.update_time update_time,
+        c2c_user.uuid c2c_user_id,
+        c2c_user.nick_name nick_name,
+        c2c_user.head_img head_img,
+        c2c_user.c2c_user_type c2c_user_type,
+        c2c_user.c2c_user_code c2c_user_code,
+        party.user_id party_id,
+        party.user_code,
+        party.user_name
+        FROM
+        t_c2c_advert advert
+        LEFT JOIN t_c2c_user c2c_user ON c2c_user.uuid = advert.c2c_user_id
+        LEFT JOIN tz_user party ON party.user_id = c2c_user.c2c_user_party_id
+        WHERE
+        1 =1
+
+        <if test="c2cUserCode!=null and c2cUserCode!=''">
+            and (c2c_user.nick_name like CONCAT('%', #{c2cUserCode}, '%') or c2c_user.c2c_user_code like CONCAT('%',
+            #{c2cUserCode}, '%'))
+        </if>
+        <if test="c2cUserType!=null and c2cUserType!=''">
+            and c2c_user.c2c_user_type = #{c2cUserType}
+        </if>
+        <if test="userCode!=null and userCode!=''">
+            AND (party.user_name like CONCAT('%', #{userCode}, '%') OR party.user_code like CONCAT('%', #{userCode},
+            '%'))
+        </if>
+
+        <if test="direction!=null and direction!=''">
+            and advert.direction = #{direction}
+        </if>
+        <if test="currency!=null and currency!=''">
+            and advert.currency =#{currency}
+        </if>
+
+        <if test="symbol!=null and symbol!=''">
+            and advert.symbol =#{symbol}
+        </if>
+        order by advert.sort_index desc,advert.create_time desc
+    </select>
+
+
+</mapper>

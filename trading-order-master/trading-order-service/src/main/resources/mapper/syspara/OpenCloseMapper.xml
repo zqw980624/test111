@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yami.trading.dao.syspara.OpenCloseMapper">
+
+	<sql id="openCloseColumns">
+		a.UUID AS "uuid",
+		a.SYMBOL AS "symbol",
+		a.open_bj_date AS "openBjDate",
+		a.close_bj_date AS "closeBjDate",
+		a.open_ts AS "openTs",
+		a.close_ts AS "closeTs"
+	</sql>
+
+	<sql id="openCloseJoins">
+
+	</sql>
+
+
+
+	<select id="findById" resultType="com.yami.trading.bean.syspara.dto.OpenCloseDTO">
+		SELECT
+			<include refid="openCloseColumns"/>
+		FROM t_open_close a
+		<include refid="openCloseJoins"/>
+		WHERE a.uuid = #{id} and a.del_flag = 0
+	</select>
+
+	<select id="findList" resultType="com.yami.trading.bean.syspara.dto.OpenCloseDTO">
+		SELECT
+			<include refid="openCloseColumns"/>
+		FROM t_open_close a
+		<include refid="openCloseJoins"/>
+	    ${ew.customSqlSegment}
+	</select>
+
+
+</mapper>

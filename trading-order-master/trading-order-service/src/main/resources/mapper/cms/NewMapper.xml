@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yami.trading.dao.cms.NewsMapper">
+
+  <select id="pageNews" resultType="com.yami.trading.bean.cms.dto.NewsDto">
+    SELECT
+      n.*,
+      u.user_code,
+      u.user_name,
+    u.role_name,
+      ur.user_name AS 'recomUserName',
+      ur.user_code AS 'recomUserCode'
+    FROM
+      t_news n
+        LEFT JOIN tz_user u ON n.user_id =u.user_id
+        LEFT JOIN tz_user ur ON u.user_recom = ur.user_id
+
+        where 1=1
+
+    <if test="title!=null and title!=''">
+      and n.title like  CONCAT('%', #{title}, '%')
+    </if>
+
+    <if test="language!=null and language!=''">
+      and n.language=#{language}
+    </if>
+
+    <if test="userCode!=null and userCode!=''">
+        and u.user_code=#{userCode} or u.user_name=#{userCode}
+    </if>
+
+     order by   n.create_time desc
+  </select>
+</mapper>

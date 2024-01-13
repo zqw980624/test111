@@ -1,0 +1,14 @@
+<configuration scan="true" scanPeriod="60 seconds" debug="false">
+
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+
+    <root level="info">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+    <logger name="com.yami.trading" level="info"/>
+    <logger name="org.mybatis" level="warn"/>
+    <logger name="org.apache.ibatis" level="warn"/>
+    <logger name="com.baomidou.mybatisplus" level="warn"/>
+</configuration>

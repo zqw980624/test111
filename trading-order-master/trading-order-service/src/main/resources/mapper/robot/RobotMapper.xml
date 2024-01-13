@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yami.trading.dao.robot.RobotMapper">
+
+	<sql id="robotColumns">
+		a.uuid AS "uuid",
+		a.symbol AS "symbol",
+		a.user_id AS "user",
+		a.status AS "status",
+		a.step AS "step",
+		a.maxmun_interval AS "maxmunInterval",
+		a.minmun_interval AS "minmunInterval",
+		a.maxmun_num AS "maxmunNum",
+		a.minmun_num AS "minmunNum",
+		a.running_status AS "runningStatus",
+		a.follow_market AS "followMarket",
+		a.market_increase AS "marketIncrease",
+		a.multiple AS "multiple",
+		a.update_time AS "updateTime",
+		a.create_time AS "createTime"
+	</sql>
+
+	<sql id="robotJoins">
+
+	</sql>
+
+
+
+	<select id="findById" resultType="com.yami.trading.bean.robot.dto.RobotDTO">
+		SELECT
+			<include refid="robotColumns"/>
+		FROM t_robot a
+		<include refid="robotJoins"/>
+		WHERE a.uuid = #{id} and a.del_flag = 0
+	</select>
+
+	<select id="findList" resultType="com.yami.trading.bean.robot.dto.RobotDTO">
+		SELECT
+			<include refid="robotColumns"/>
+		FROM t_robot a
+		<include refid="robotJoins"/>
+	    ${ew.customSqlSegment}
+	</select>
+
+
+</mapper>

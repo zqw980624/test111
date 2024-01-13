@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yami.trading.dao.item.ItemSummaryMapper">
+
+	<sql id="itemSummaryColumns">
+		a.uuid AS "uuid",
+		a.pb_ttm AS "pbTtm",
+		a.bps AS "bps",
+		a.dividend_rate AS "dividendRate",
+		a.net_profit_ratio AS "netProfitRatio",
+		a.operate_income_qoq AS "operateIncomeQoq",
+		a.yoy_profit_share AS "yoyProfitShare",
+		a.hksk_market_cap AS "hkskMarketCap",
+		a.sk_market_cap AS "skMarketCap",
+		a.pe_ttm AS "peTtm",
+		a.basic_eps AS "basicEps",
+		a.dps_hkd AS "dpsHkd",
+		a.gross_profit_margin AS "grossProfitMargin",
+		a.operate_income AS "operateIncome",
+		a.shhareholders_earnings AS "shhareholdersEarnings",
+		a.hong_kong_stock_capital AS "hongKongStockCapital",
+		a.common_acs AS "commonAcs",
+		a.symbol AS "symbol",
+		a.secucode AS "secucode",
+		a.security_type AS "securityType",
+		a.isin_code AS "isinCode",
+		a.listing_date AS "listingDate",
+		a.issue_price AS "issuePrice",
+		a.board AS "board",
+		a.year_settle_day AS "yearSettleDay",
+		a.issued_common_shares AS "issuedCommonShares",
+		a.trade_unit AS "tradeUnit",
+		a.par_value_per_share AS "parValuePerShare",
+		a.org_name AS "orgName",
+		a.en_name AS "enName",
+		a.belong_industry AS "belongIndustry",
+		a.hong_kong_stock_shares AS "hongKongStockShares",
+		a.registered_capital AS "registeredCapital",
+		a.chairman AS "chairman",
+		a.secretary AS "secretary",
+		a.found_date AS "foundDate",
+		a.emp_num AS "empNum",
+		a.org_profile AS "orgProfile",
+		a.address AS "address",
+		a.company_headquarters AS "companyHeadquarters",
+		a.share_registrar AS "shareRegistrar",
+		a.account_firm AS "accountFirm",
+		a.main_correspondent_bank AS "mainCorrespondentBank",
+		a.legal_advisor AS "legalAdvisor",
+		a.org_web AS "orgWeb",
+		a.org_email AS "orgEmail",
+		a.org_tel AS "orgTel",
+		a.org_fax AS "orgFax",
+		a.eps AS "eps",
+		a.nav_per_share AS "navPerShare",
+		a.total_operating_revenue AS "totalOperatingRevenue",
+		a.yoy_total_operating_revenue AS "yoyTotalOperatingRevenue",
+		a.net_profit AS "netProfit",
+		a.yoy_net_profit AS "yoyNetProfit",
+		a.roe AS "roe",
+		a.debt_ratio AS "debtRatio",
+		a.circulating_a_shares AS "circulatingAShares",
+		a.circulating_a_share_market_capitalization AS "circulatingAShareMarketCapitalization",
+		a.loan_to_value_ratio AS "loanToValueRatio",
+		a.goodwill_scale AS "goodwillScale",
+		a.region AS "region",
+		a.belonging_concept AS "belongingConcept",
+		a.legal_representative AS "legalRepresentative",
+		a.managing_director AS "managingDirector",
+		a.management_team_size AS "managementTeamSize",
+		a.audit_organization AS "auditOrganization",
+		a.net_funds_raised AS "netFundsRaised",
+		a.pe_ratio_at_ipo AS "peRatioAtIpo",
+		a.online_drawing_rate AS "onlineDrawingRate",
+		a.total_income AS "totalIncome",
+		a.yoy_total_income AS "yoyTotalIncome",
+		a.profit_parent_company AS "profitParentCompany",
+		a.yoy_profit_parent_company AS "yoyProfitParentCompany",
+		a.weekly_interest_rate AS "weeklyInterestRate",
+		a.stock_exchange AS "stockExchange",
+		a.create_by AS "createBy.id",
+		a.create_time AS "createTime",
+		a.update_by AS "updateBy.id",
+		a.update_time AS "updateTime",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag"
+	</sql>
+
+	<sql id="itemSummaryJoins">
+
+	</sql>
+
+
+
+	<select id="findById" resultType="com.yami.trading.bean.item.dto.ItemSummaryDTO">
+		SELECT
+			<include refid="itemSummaryColumns"/>
+		FROM t_item_summary a
+		<include refid="itemSummaryJoins"/>
+		WHERE a.uuid = #{id} and a.del_flag = 0
+	</select>
+
+	<select id="findList" resultType="com.yami.trading.bean.item.dto.ItemSummaryDTO">
+		SELECT
+			<include refid="itemSummaryColumns"/>
+		FROM t_item_summary a
+		<include refid="itemSummaryJoins"/>
+	    ${ew.customSqlSegment}
+	</select>
+
+
+</mapper>

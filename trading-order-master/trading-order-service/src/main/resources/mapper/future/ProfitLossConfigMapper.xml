@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yami.trading.dao.future.ProfitLossConfigMapper">
+
+	<sql id="profitLossConfigColumns">
+		a.UUID AS "uuid",
+		a.PARTY_ID AS "partyId",
+		a.REMARK AS "remark",
+		a.TYPE AS "type",
+		a.create_by AS "createBy",
+		a.update_by AS "updateBy",
+		a.update_time AS "updateTime",
+		a.del_flag AS "delFlag",
+		a.create_time_ts AS "createTimeTs",
+		a.update_time_ts AS "updateTimeTs"
+	</sql>
+
+	<sql id="profitLossConfigJoins">
+
+	</sql>
+
+
+
+	<select id="findById" resultType="com.yami.trading.bean.future.dto.ProfitLossConfigDTO">
+		SELECT
+			<include refid="profitLossConfigColumns"/>
+		FROM t_profit_loss_config a
+		<include refid="profitLossConfigJoins"/>
+		WHERE a.uuid = #{id} and a.del_flag = 0
+	</select>
+
+	<select id="findList" resultType="com.yami.trading.bean.future.dto.ProfitLossConfigDTO">
+		SELECT
+			<include refid="profitLossConfigColumns"/>
+		FROM t_profit_loss_config a
+		<include refid="profitLossConfigJoins"/>
+	    ${ew.customSqlSegment}
+	</select>
+
+
+	<!--代理商逻辑 todo -->
+	<select id="listRecord" resultType="com.yami.trading.bean.future.dto.ProfitLossConfigDTO" >
+		select * from t_profit_loss_config a
+		left join tz_user b on a.PARTY_ID = b.user_id
+		<where>
+			<if test="query.children != null and query.children.size() >0">
+				AND a.party_id in
+				<foreach collection="query.children" item="item" index="index" open="(" close=")" separator=",">
+					#{item}
+				</foreach>
+			</if>
+		<if test="query.userName!=null and query.userName!=''">
+			AND  (b.user_name like CONCAT('%', #{query.userName}, '%') or b.user_code like CONCAT('%', #{query.userName}, '%'))
+		</if>
+			and a.del_flag = 0
+		</where>
+		order by a.create_time desc
+	</select>
+</mapper>

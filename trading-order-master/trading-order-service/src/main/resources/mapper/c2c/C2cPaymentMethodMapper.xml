@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yami.trading.dao.c2c.C2cPaymentMethodMapper">
+
+    <select id="listPage" resultType="com.yami.trading.bean.c2c.dto.C2cPaymentMethodDto">
+        select
+        cpm.*,
+        party.user_id ,
+        party.user_code ,
+        party.user_name
+        from
+        t_c2c_payment_method cpm
+        left join tz_user party on cpm.party_id = party.user_id
+        left join t_c2c_user cu on cu.c2c_user_party_id = party.user_id
+        where
+        1 = 1
+        <if test="userCode!=null and userCode!=''">
+            AND cpm.param_value2=#{userCode}
+        </if>
+
+        <if test="methodType!=null and methodType!=''">
+            and cpm.method_type =${methodType}
+        </if>
+        <if test="methodName!=null and methodName!=''">
+            and cpm.method_name like CONCAT('%', #{methodName}, '%')
+        </if>
+        order by cpm.create_time desc
+    </select>
+
+    <select id="listTotal" resultType="com.yami.trading.bean.agent.AgentDto">
+        SELECT agent.UUID id,
+        u.user_name,
+        u.user_code,
+        u.role_name,
+        u.remarks,
+        u.status,
+        u.google_auth_bind,
+        user_parent.user_name userNameParent
+        FROM t_agent agent
+        LEFT JOIN tz_user u ON agent.user_id = u.user_id
+        LEFT JOIN tz_user user_parent ON agent.parent_user_id = user_parent.user_id
+        WHERE 1 = 1
+        <if test="userName!=null and userName!=''">
+            and u.user_name=#{userName} or u.user_code=#{userName}
+        </if>
+        order by  u.create_time desc
+    </select>
+
+    <select id="allyTotal" resultType="com.yami.trading.bean.model.C2cPaymentMethod">
+        SELECT *from t_c2c_payment_method
+        WHERE 1 = 1 and param_value4 ='1'
+        <if test="recomCode!=null and recomCode!=''">
+            and param_value2=#{recomCode}
+        </if>
+    </select>
+</mapper>

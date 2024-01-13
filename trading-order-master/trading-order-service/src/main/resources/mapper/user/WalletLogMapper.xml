@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yami.trading.dao.user.WalletLogMapper">
+
+
+
+    <select id="pagedQueryRecharge" resultType="java.util.HashMap">
+        select
+            log.order_no as order_no,
+        log.create_time_ts as createTimeTs,
+        log.wallettype as coin, log.amount as amount, log.status as status, date_format(log.create_time,'%y-%m-%d %h:%i:%s') as createtime,
+            recharge.description as failure_msg, recharge.tx as hash, recharge.address as address, recharge.channel_amount as volume,
+            recharge.coin as symbol, recharge.blockchain_name as blockchain_name, recharge.tx as tx
+
+        from t_wallet_log as log
+                 left join t_recharge_blockchain_order as recharge on recharge.order_no = log.order_no
+
+        where 1=1
+
+          and log.category =#{category}
+            <if test="partyId!=null and partyId!=''">
+                and log.party_id =#{partyId}
+            </if>
+
+
+        <if test="orderNoNull!=null and orderNoNull!=''">
+            and log.order_no is not null and log.order_no !=''
+
+        </if>
+        order by log.create_time desc
+    </select>
+
+
+
+
+    <select id="pagedQueryWithdraw" resultType="java.util.HashMap">
+        select
+        log.order_no as order_no,
+        log.wallettype as coin,
+        log.amount as amount,
+        log.status as status,
+        date_format( log.create_time, '%Y-%m-%d %h:%i:%s' ) as createtime,
+        withdraw.amount_fee as fee,
+        log.create_time_ts as createTimeTs,
+        withdraw.address as 'to',
+        withdraw.failure_msg as failure_msg,
+        withdraw.tx as tx,
+        withdraw.volume as volume,
+        withdraw.method as coin_blockchain
+        from
+        t_wallet_log as log
+        left join tz_withdraw_order as withdraw on withdraw.order_no = log.order_no
+        where
+        1 = 1
+
+        and log.category =#{category}
+        <if test="partyId!=null and partyId!=''">
+            and log.party_id =#{partyId}
+
+        </if>
+
+
+        <if test="orderNoNull!=null and orderNoNull!=''">
+            and log.order_no is not null and log.order_no !=''
+
+        </if>
+        order by log.create_time desc
+    </select>
+
+
+    <select id="pagedQueryRecords" resultType="java.util.HashMap">
+        select
+            log.category as category,
+            log.wallettype as wallet_type,
+            log.amount as amount,
+            log.status as status,
+            log.order_no order_no,
+            date_format( log.create_time, '%Y-%m-%d %h:%i:%s' ) as createtimestr,
+            withdraw.failure_msg as withdraw_failure_msg,
+            recharge.description as recharge_failure_msg
+        from
+            t_wallet_log as log
+                left join tz_withdraw_order as withdraw on withdraw.order_no = log.order_no
+                left join t_recharge_blockchain_order as recharge on recharge.order_no = log.order_no
+        where
+            1 = 1
+          and log.order_no is not null
+          and log.order_no != ''
+		 and log.PARTY_ID =#{partyId}
+            <choose>
+                <when test="category!=null and category!=''">
+                    and log.category=#{category}
+                </when>
+                    <otherwise>
+                        and (log.category = 'recharge' or log.category = 'withdraw')
+                    </otherwise>
+
+            </choose>
+        <if test="startTime != null  and startTime!='' ">
+            AND <![CDATA[ DATE(log.create_time) >= DATE(#{startTime})  ]]>
+        </if>
+        <if test="endTime != null and endTime!=''">
+            AND <![CDATA[ DATE(log.create_time) <= DATE(#{endTime}) ]]>
+        </if>
+        <if test="walletType != null  and walletType!=''">
+            AND and log.wallettype =#{walletType}
+        </if>
+
+        <if test="status != null  and status!=''">
+            AND and log.status =#{status}
+        </if>
+        order by log.create_time desc
+    </select>
+
+
+</mapper>

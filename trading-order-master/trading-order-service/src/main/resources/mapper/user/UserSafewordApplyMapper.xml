@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yami.trading.dao.user.UserSafewordApplyMapper">
+
+  <select id="listRecord" resultType="com.yami.trading.bean.user.dto.UserSafewordApplyDto">
+      SELECT hl.*,u.user_name,u.user_code,u.role_name,u.user_level,u.real_name,u.real_name_authority FROM t_user_safeword_apply   hl
+      LEFT JOIN  tz_user  u ON  hl.user_id=u.user_id
+           where 1=1
+        <if test="roleName!=null and roleName!=''">
+             and u.role_name=#{roleName}
+        </if>
+
+      <if test="status!=null and status!=''">
+          and hl.status=#{status}
+      </if>
+
+
+      <if test="operate!=null and operate!=''">
+          and hl.operate=#{operate}
+      </if>
+      <if test="userCode!=null and userCode!=''">
+          and (u.user_code=#{userCode} or u.user_name=#{userCode})
+      </if>
+      <if test="userName!=null and userName!=''">
+          and (u.user_code=#{userName} or u.user_name=#{userName})
+      </if>
+
+      order by hl.create_time desc
+  </select>
+</mapper>

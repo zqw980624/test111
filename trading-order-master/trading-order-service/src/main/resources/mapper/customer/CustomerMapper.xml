@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yami.trading.dao.customer.CustomerMapper">
+    <select id="listPage" resultType="com.yami.trading.bean.customer.CustomerDto">
+
+        select
+        customer.uuid id,
+        customer.user_name ,
+        customer.online_state,
+        customer.last_customer_time,
+        customer.last_online_time,
+        customer.auto_answer,
+        u.google_auth_bind,
+        u.remarks,
+        u.`status`,
+        u.user_id
+        from
+        t_customer customer
+        left join tz_sys_user u on u.username = customer.user_name where 1=1
+
+
+        <if test="userName!=null and userName!=''">
+            and customer.user_name like CONCAT('%', #{userName}, '%')
+        </if>
+        order by customer.create_time desc
+    </select>
+
+</mapper>

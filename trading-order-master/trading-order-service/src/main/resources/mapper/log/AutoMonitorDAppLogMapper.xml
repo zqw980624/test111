@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yami.trading.dao.log.AutoMonitorDAppLogMapper">
+
+  <select id="listPage" resultType="com.yami.trading.bean.log.dto.AutoMonitorDAppLogDto">
+      SELECT
+      u.user_name ,
+      u.role_name,
+      u.user_code,
+      ur.user_name userNameParent,
+      dapp.*
+      FROM
+      t_auto_monitor_dapp_log dapp
+      LEFT JOIN tz_user  u ON dapp.user_id = u.user_id
+      LEFT JOIN tz_user ur ON u.user_recom = ur.user_id
+
+                                where  1=1
+        <if test="rolename!=null and rolename!=''">
+             and u.role_name=#{rolename}
+        </if>
+
+      <if test="action!=null and action!=''">
+          and dapp.action=#{action}
+      </if>
+
+      <if test="userName!=null and userName!=''">
+          and u.user_name=#{userName} or u.user_code=#{userName}
+      </if>
+
+      <if test="startTime!=null and endTime!=null">
+          and dapp.create_time BETWEEN #{startTime} and #{endTime}
+      </if>
+      order by dapp.create_time desc
+  </select>
+</mapper>

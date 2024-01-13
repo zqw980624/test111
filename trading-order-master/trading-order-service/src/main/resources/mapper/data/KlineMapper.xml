@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yami.trading.dao.data.KlineMapper">
+
+	<sql id="klineColumns">
+		a.UUID AS "uuid",
+		a.SYMBOL AS "symbol",
+		a.TS AS "ts",
+		a.OPEN AS "open",
+		a.HIGH AS "high",
+		a.LOW AS "low",
+		a.CLOSE AS "close",
+		a.AMOUNT AS "amount",
+		a.VOLUME AS "volume",
+		a.PERIOD AS "period"
+	</sql>
+
+	<sql id="klineJoins">
+
+	</sql>
+
+
+
+
+</mapper>

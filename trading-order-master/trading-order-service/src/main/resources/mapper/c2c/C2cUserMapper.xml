@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yami.trading.dao.c2c.C2cUserMapper">
+
+    <select id="pagedQuery" resultType="java.util.HashMap">
+        select
+        cu.uuid id,
+        cu.nick_name nick_name,
+        cu.head_img head_img,
+        cu.deposit deposit,
+        cu.deposit_open deposit_open,
+        cu.deposit_gift_rate deposit_gift_rate,
+        cu.c2c_user_type c2c_user_type,
+        cu.c2c_user_code c2c_user_code,
+        cu.c2c_user_party_id c2c_user_party_id,
+        cu.thirty_days_order thirty_days_order,
+        cu.thirty_days_order_ratio thirty_days_order_ratio,
+        cu.thirty_days_pass_average_time thirty_days_pass_average_time,
+        cu.thirty_days_pay_average_time thirty_days_pay_average_time,
+        cu.thirty_days_amount thirty_days_amount,
+        cu.buy_amount buy_amount,
+        cu.sell_amount sell_amount,
+        cu.total_amount total_amount,
+        cu.account_create_days account_create_days,
+        cu.first_exchange_days first_exchange_days,
+        cu.exchange_users exchange_users,
+        cu.buy_success_orders buy_success_orders,
+        cu.sell_success_orders sell_success_orders,
+        cu.total_success_orders total_success_orders,
+        cu.appraise_good appraise_good,
+        cu.appraise_bad appraise_bad,
+        cu.order_mail_notice_open order_mail_notice_open,
+        cu.order_sms_notice_open order_sms_notice_open,
+        cu.order_app_notice_open order_app_notice_open,
+        cu.appeal_mail_notice_open appeal_mail_notice_open,
+        cu.appeal_sms_notice_open appeal_sms_notice_open,
+        cu.appeal_app_notice_open appeal_app_notice_open,
+        cu.chat_app_notice_open chat_app_notice_open,
+        cu.security_mail_notice_open security_mail_notice_open,
+        cu.security_sms_notice_open security_sms_notice_open,
+        cu.security_app_notice_open security_app_notice_open,
+        cu.remark remark,
+        cu.create_time create_time,
+        cu.update_time update_time,
+        manager.user_id manager_id,
+        manager.username manager_name,
+        party.user_name user_name,
+        party.user_code user_code,
+        party.user_mobile_bind,
+        party.mail_bind,
+        party.real_name_authority,
+        party.highlevel_authority
+        from
+        t_c2c_user cu
+        left join tz_user party on cu.c2c_user_party_id = party.user_id
+        left join tz_sys_user manager on cu.c2c_manager_party_id = manager.user_id
+        where
+        1 =1
+        <if test="c2cManagerName!='' and c2cManagerName!=null">
+             and manager.username like CONCAT('%', #{c2cManagerName}, '%')
+        </if>
+        <if test="c2cUserId!='' and c2cUserId!=null">
+            and (cu.nick_name like CONCAT('%', #{c2cUserId}, '%')  or cu.c2c_user_code like  CONCAT('%', #{c2cUserId}, '%')  )
+        </if>
+        <if test="c2cUserPartyId!='' and c2cUserPartyId!=null">
+            and (party.user_name like CONCAT('%', #{c2cUserPartyId}, '%') or party.user_code like CONCAT('%', #{c2cUserPartyId}, '%') )
+        </if>
+        <if test="c2cUserType!='' and c2cUserType!=null">
+            and cu.c2c_user_type = #{c2cUserType}
+        </if>
+        order by cu.create_time desc
+    </select>
+
+    <select id="getC2cManagerC2cUser" resultType="java.util.HashMap">
+
+        select c2c_user.uuid id, c2c_user.nick_name nick_name, c2c_user.c2c_user_code c2c_user_code,
+               c2c_user.c2c_user_type c2c_user_type, c2c_user.deposit_open deposit_open, c2c_user.deposit deposit
+        from t_c2c_user c2c_user where c2c_user.c2c_manager_party_id =#{managerId}
+
+    </select>
+
+
+    <select id="getAllC2cManager" resultType="java.util.HashMap">
+
+        SELECT u.user_id id,
+               u.user_name
+        FROM
+
+            tz_user u
+                LEFT JOIN SCT_USER_ROLE user_role ON user_role.USER_UUID = u.user_id where user_role.role_uuid =#{roleUuid}
+    </select>
+</mapper>

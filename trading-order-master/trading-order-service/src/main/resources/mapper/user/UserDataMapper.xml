@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yami.trading.dao.user.UserDataMapper">
+
+
+    <select id="daySumData" resultType="com.yami.trading.bean.user.dto.UserBenefitsDto">
+
+        select
+        ifnull(sum(ud.recharge),0) as recharge,ifnull(sum(ud.recharge_usdt),0) as
+        recharge_usdt,ifnull(sum(ud.recharge_eth),0) as recharge_eth,ifnull(sum(ud.recharge_btc),0) as
+        recharge_btc,ifnull(sum(ud.recharge_ht),0) as recharge_ht,ifnull(sum(ud.recharge_ltc),0) as recharge_ltc,
+        ifnull(sum(ud.withdraw),0) as withdraw,ifnull(sum(ud.recharge_withdrawal_fee),0) as
+        recharge_withdrawal_fee,ifnull(sum(ud.recharge_usdt)-sum(ud.withdraw),0) as balance_amount,
+        ifnull(sum(ud.finance_amount),0) as finance_amount,ifnull(sum(ud.finance_income),0) as finance_income,
+        ifnull(sum(ud.exchange_fee),0) as exchange_fee,ifnull(sum(ud.exchange_income),0) as exchange_income,
+        ifnull(sum(ud.furtures_fee),0) as furtures_fee,ifnull(sum(ud.furtures_income),0) as furtures_income,
+        ifnull(sum(ud.miner_amount),0) as miner_amount,ifnull(sum(ud.miner_income),0) as miner_income,
+        ifnull(sum(ud.third_recharge_amount),0) as third_recharge_amount,
+        ifnull(sum(ud.exchange_lever_amount),0) as exchange_lever_amount,ifnull(sum(ud.exchange_lever_fee),0) as
+        exchange_lever_fee,ifnull(sum(ud.exchange_lever_order_income),0) as exchange_lever_order_income
+        from t_userdata ud
+        where 1=1 and ud.rolename ='member'
+        <if test="startTime!=null">
+            and ud.create_time <![CDATA[ >= ]]>  #{startTime}
+        </if>
+        <if test="endTime!=null">
+            and ud.create_time   <![CDATA[ <= ]]>  #{endTime}
+        </if>
+        <if test=" userIds !=null and userIds.length > 0">
+            <foreach collection="userIds" item="id" index="no" open="("
+                     separator="," close=")">
+                #{id}
+            </foreach>
+        </if>
+
+    </select>
+
+    <select id="daySumDatas" resultType="com.yami.trading.bean.user.dto.UserBenefitsDto">
+
+        select
+        ifnull(sum(ud.recharge),0) as recharge,ifnull(sum(ud.recharge_usdt),0) as
+        recharge_usdt,ifnull(sum(ud.recharge_eth),0) as recharge_eth,ifnull(sum(ud.recharge_btc),0) as
+        recharge_btc,ifnull(sum(ud.recharge_ht),0) as recharge_ht,ifnull(sum(ud.recharge_ltc),0) as recharge_ltc,
+        ifnull(sum(ud.withdraw),0) as withdraw,ifnull(sum(ud.recharge_withdrawal_fee),0) as
+        recharge_withdrawal_fee,ifnull(sum(ud.recharge_usdt)-sum(ud.withdraw),0) as balance_amount,
+        ifnull(sum(ud.finance_amount),0) as finance_amount,ifnull(sum(ud.finance_income),0) as finance_income,
+        ifnull(sum(ud.exchange_fee),0) as exchange_fee,ifnull(sum(ud.exchange_income),0) as exchange_income,
+        ifnull(sum(ud.furtures_fee),0) as furtures_fee,ifnull(sum(ud.furtures_income),0) as furtures_income,
+        ifnull(sum(ud.miner_amount),0) as miner_amount,ifnull(sum(ud.miner_income),0) as miner_income,
+        ifnull(sum(ud.third_recharge_amount),0) as third_recharge_amount,
+        ifnull(sum(ud.exchange_lever_amount),0) as exchange_lever_amount,ifnull(sum(ud.exchange_lever_fee),0) as
+        exchange_lever_fee,ifnull(sum(ud.exchange_lever_order_income),0) as exchange_lever_order_income
+        from t_userdata ud left join tz_user p  on ud.user_id=p.user_id
+        where 1=1 and ud.rolename ='member'
+        <if test="startTime!=null">
+            and ud.create_time <![CDATA[ >= ]]>  #{startTime}
+        </if>
+        <if test="endTime!=null">
+            and ud.create_time   <![CDATA[ <= ]]>  #{endTime}
+        </if>
+        <if test=" userIds !=null and userIds.length > 0">
+            <foreach collection="userIds" item="id" index="no" open="("
+                     separator="," close=")">
+                #{id}
+            </foreach>
+        </if>
+        <if test="userCodes!=null and userCodes!=''">
+            and p.recom_code=#{userCodes}
+        </if>
+    </select>
+
+    <select id="userAll" resultType="java.util.Map">
+        SELECT
+            date_format( ud.create_time, "%Y-%m-%d" ) AS dateTime,
+            sum( ud.recharge_dapp ) AS recharge_dapp,
+            sum( ud.recharge ) AS recharge,
+            sum( ud.recharge_usdt ) AS recharge_usdt,
+            sum( ud.recharge_usdc ) AS recharge_usdc,
+            sum( ud.recharge_eth ) AS recharge_eth,
+            sum( ud.recharge_btc ) AS recharge_btc,
+            ifnull( sum( ud.recharge_ht ), 0 ) AS recharge_ht,
+            ifnull( sum( ud.recharge_ltc ), 0 ) AS recharge_ltc,
+            sum( ud.withdraw_dapp ) AS withdraw_dapp,
+            sum( ud.withdraw ) AS withdraw,
+            ifnull( sum( ud.withdraw_eth ), 0 ) AS withdraw_eth,
+            ifnull( sum( ud.withdraw_btc ), 0 ) AS withdraw_btc,
+            sum( ud.recharge_withdrawal_fee ) AS recharge_withdrawal_fee,
+            sum( ud.gift_money ) AS gift_money,
+            sum( ud.recharge )- sum( ud.withdraw ) AS balance_amount,
+            ifnull(( sum( ud.recharge_usdt ) - 	sum( ud.withdraw ) ), 0 ) AS difference,
+            sum( ud.amount ) AS amount,
+            sum( ud.fee ) AS fee,
+            sum( ud.order_income ) AS order_income,
+            sum( ud.finance_amount ) AS finance_amount,
+            sum( ud.finance_income ) AS finance_income,
+            sum( ud.exchange_amount ) AS exchange_amount,
+            sum( ud.exchange_fee ) AS exchange_fee,
+            sum( ud.exchange_income ) AS exchange_income,
+            sum( ud.coin_income ) AS coin_income,
+            sum( ud.furtures_amount ) AS furtures_amount,
+            sum( ud.furtures_fee ) AS furtures_fee,
+            sum( ud.furtures_income ) AS furtures_income,
+            ifnull( sum( ud.miner_amount ), 0 ) AS miner_amount,
+            ifnull( sum( ud.miner_income ), 0 ) AS miner_income,
+            ifnull( sum( ud.third_recharge_amount ), 0 ) AS third_recharge_amount,
+            ifnull( sum( ud.exchange_lever_amount ), 0 ) AS exchange_lever_amount,
+            ifnull( sum( ud.exchange_lever_fee ), 0 ) AS exchange_lever_fee,
+            ifnull( sum( ud.exchange_lever_order_income ), 0 ) AS exchange_lever_order_income
+        FROM
+            t_userdata ud
+        WHERE
+            1 = 1
+
+        <if test="startTime!=null">
+            and ud.create_time <![CDATA[ >= ]]>  #{startTime}
+        </if>
+        <if test="endTime!=null">
+            and ud.create_time   <![CDATA[ <= ]]>  #{endTime}
+        </if>
+
+
+        GROUP BY
+            dateTime
+        ORDER BY
+            dateTime DESC
+    </select>
+
+
+    <select id="sumAll" resultType="java.util.Map">
+        select
+            ifnull( sum( ud.recharge_dapp ), 0 ) as recharge_dapp,
+            ifnull( sum( ud.recharge ), 0 ) as recharge,
+            ifnull( sum( ud.recharge_usdt ), 0 ) as recharge_usdt,
+            ifnull( sum( ud.recharge_usdc ), 0 ) as recharge_usdc,
+            ifnull( sum( ud.recharge_eth ), 0 ) as recharge_eth,
+            ifnull( sum( ud.recharge_btc ), 0 ) as recharge_btc,
+            ifnull( sum( ud.recharge_ht ), 0 ) as recharge_ht,
+            ifnull( sum( ud.recharge_ltc ), 0 ) as recharge_ltc,
+            ifnull( sum( ud.withdraw_dapp ), 0 ) as withdraw_dapp,
+            ifnull( sum( ud.withdraw ), 0 ) as withdraw,
+            ifnull( sum( ud.withdraw_eth ), 0 ) as withdraw_eth,
+            ifnull( sum( ud.withdraw_btc ), 0 ) as withdraw_btc,
+            ifnull( sum( ud.recharge_withdrawal_fee ), 0 ) as recharge_withdrawal_fee,
+            ifnull( sum( ud.gift_money ), 0 ) as gift_money,
+            ifnull(
+                        sum( ud.recharge )- sum( ud.withdraw ),
+                        0
+                ) as balance_amount,
+            ifnull(( sum( ud.recharge_usdt ) - sum( ud.withdraw ) ), 0 ) as difference,
+            ifnull( sum( ud.amount ), 0 ) as amount,
+            ifnull( sum( ud.fee ), 0 ) as fee,
+            ifnull( sum( ud.order_income ), 0 ) as order_income,
+            ifnull( sum( ud.finance_amount ), 0 ) as finance_amount,
+            ifnull( sum( ud.finance_income ), 0 ) as finance_income,
+            ifnull( sum( ud.exchange_amount ), 0 ) as exchange_amount,
+            ifnull( sum( ud.exchange_fee ), 0 ) as exchange_fee,
+            ifnull( sum( ud.exchange_income ), 0 ) as exchange_income,
+            ifnull( sum( ud.coin_income ), 0 ) as coin_income,
+            ifnull( sum( ud.furtures_amount ), 0 ) as furtures_amount,
+            ifnull( sum( ud.furtures_fee ), 0 ) as furtures_fee,
+            ifnull( sum( ud.furtures_income ), 0 ) as furtures_income,
+            ifnull( sum( ud.miner_amount ), 0 ) as miner_amount,
+            ifnull( sum( ud.miner_income ), 0 ) as miner_income,
+            ifnull( sum( ud.third_recharge_amount ), 0 ) as third_recharge_amount,
+            ifnull( sum( ud.exchange_lever_amount ), 0 ) as exchange_lever_amount,
+            ifnull( sum( ud.exchange_lever_fee ), 0 ) as exchange_lever_fee,
+            ifnull( sum( ud.exchange_lever_order_income ), 0 ) as exchange_lever_order_income
+        from
+            t_userdata ud
+        where
+            1 = 1
+        <if test="startTime!=null">
+            and ud.create_time <![CDATA[ >= ]]>  #{startTime}
+        </if>
+        <if test="endTime!=null">
+            and ud.create_time   <![CDATA[ <= ]]>  #{endTime}
+        </if>
+    </select>
+
+
+    <select id="listUserGenefits" resultType="java.util.Map">
+        select
+        u.role_name,
+        u.user_name,
+        u.user_code,
+        u.user_id,
+        uds.* ,
+        udss.reco_num,
+        wallet.money
+        from
+        tz_user u
+        left join (
+        select
+        ud.user_id,
+        ifnull( sum( ud.recharge ), 0 ) as recharge,
+        ifnull( sum( ud.recharge_usdt ), 0 ) as recharge_usdt,
+        ifnull( sum( ud.recharge_eth ), 0 ) as recharge_eth,
+        ifnull( sum( ud.recharge_btc ), 0 ) as recharge_btc,
+        ifnull( sum( ud.recharge_ht ), 0 ) as recharge_ht,
+        ifnull( sum( ud.recharge_ltc ), 0 ) as recharge_ltc,
+        ifnull( sum( ud.withdraw ), 0 ) as withdraw,
+        ifnull( sum( ud.withdraw_eth ), 0 ) as withdraw_eth,
+        ifnull( sum( ud.withdraw_btc ), 0 ) as withdraw_btc,
+        ifnull( sum( ud.recharge_withdrawal_fee ), 0 ) as recharge_withdrawal_fee,
+        ifnull( sum( ud.gift_money ), 0 ) as gift_money,
+        ifnull(
+        sum( ud.recharge )- sum( ud.withdraw ),
+        0
+        ) as difference,
+        ifnull( sum( ud.amount ), 0 ) as amount,
+        ifnull( sum( ud.fee ), 0 ) as fee,
+        ifnull( sum( ud.order_income ), 0 ) as order_income,
+        ifnull( sum( ud.finance_amount ), 0 ) as finance_amount,
+        ifnull( sum( ud.finance_income ), 0 ) as finance_income,
+        ifnull( sum( ud.exchange_amount ), 0 ) as exchange_amount,
+        ifnull( sum( ud.exchange_fee ), 0 ) as exchange_fee,
+        ifnull( sum( ud.exchange_income ), 0 ) as exchange_income,
+        ifnull( sum( ud.coin_income ), 0 ) as coin_income,
+        ifnull( sum( ud.furtures_amount ), 0 ) as furtures_amount,
+        ifnull( sum( ud.furtures_fee ), 0 ) as furtures_fee,
+        ifnull( sum( ud.furtures_income ), 0 ) as furtures_income,
+        ifnull( sum( ud.miner_amount ), 0 ) as miner_amount,
+        ifnull( sum( ud.miner_income ), 0 ) as miner_income,
+        ifnull( sum( ud.third_recharge_amount ), 0 ) as third_recharge_amount,
+        ifnull( sum( ud.exchange_lever_amount ), 0 ) as exchange_lever_amount,
+        ifnull( sum( ud.exchange_lever_fee ), 0 ) as exchange_lever_fee,
+        ifnull( sum( ud.exchange_lever_order_income ), 0 ) as exchange_lever_order_income
+        FROM
+        t_userdata ud where 1=1
+        <if test="startTime!=null">
+            and ud.create_time <![CDATA[ >= ]]>  #{startTime}
+        </if>
+        <if test="endTime!=null">
+            and ud.create_time   <![CDATA[ <= ]]>  #{endTime}
+        </if>
+        group by
+        ud.user_id
+        ) uds on u.user_id = uds.user_id
+        left join t_userdatasum udss on u.user_id = udss.user_id
+        left join tz_wallet wallet on u.user_id = wallet.user_id
+
+        WHERE u.role_name="MEMBER"
+
+        <if test="userName!=null and userName!=''">
+            and u.user_name=#{userName} or u.user_code=#{userName}
+        </if>
+
+        <if test="children!=null">
+            and u.user_id in
+            <foreach collection="children" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        order by u.user_code desc
+    </select>
+</mapper>

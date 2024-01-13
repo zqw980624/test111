@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yami.trading.dao.c2c.C2cAppealMapper">
+
+  <select id="pagedQuery" resultType="java.util.HashMap">
+
+
+      select
+          c2c_appeal.uuid id,
+          c2c_appeal.order_no order_no,
+          c2c_appeal.reason reason,
+          c2c_appeal.description description,
+          c2c_appeal.img img,
+          c2c_appeal.name name,
+          c2c_appeal.phone phone,
+          c2c_appeal.state state,
+          c2c_appeal.create_time create_time,
+          c2c_appeal.update_time update_time,
+          c2c_order.c2c_user_code c2c_user_code,
+          c2c_order.c2c_user_nick_name c2c_user_nick_name,
+          c2c_order.c2c_user_party_code c2c_user_party_code,
+          c2c_order.c2c_user_party_name c2c_user_party_name,
+          c2c_order.c2c_user_type,
+          party.user_code,
+          party.user_name,
+          party.role_name
+      from
+          t_c2c_appeal c2c_appeal
+              left join t_c2c_order c2c_order on c2c_appeal.order_no = c2c_order.order_no
+              left join tz_user party on party.user_id = c2c_order.party_id
+              left join t_c2c_user c2c_user on c2c_user.uuid = c2c_order.c2c_user_id
+      where
+          1 = 1
+
+
+
+      <if test="status!=null and status!=''">
+          and c2c_appeal.state = #{status}
+      </if>
+
+      <if test="orderNo!=null and orderNo!=''">
+          and c2c_appeal.order_no =#{orderNo}
+      </if>
+
+      <if test="userCode!=null and userCode!=''">
+          and (party.user_name like CONCAT('%', #{userCode}, '%')  or party.usercode like  CONCAT('%', #{userCode}, '%'))
+      </if>
+      <if test="roleName!=null and roleName!=''">
+          and c2c_appeal.role_name =#{roleName}
+      </if>
+
+
+
+      <if test="c2cUserCode!=null and c2cUserCode!=''">
+        and (c2c_order.c2c_user_nick_name
+                 like CONCAT('%', #{c2cUserCode}, '%') or c2c_order.c2c_user_code like CONCAT('%', #{c2cUserCode}, '%'))
+
+      </if>
+
+
+      <if test="c2cUserCode!=null and c2cUserCode!=''">
+          and c2c_order.c2c_user_type = #{c2cUserType}
+      </if>
+
+
+      <if test="c2cUserPartyCode!=null and c2cUserPartyCode!=''">
+          and (c2c_order.c2c_user_party_name like CONCAT('%', #{c2cUserPartyCode}, '%') or c2c_order.c2c_user_party_code like CONCAT('%', #{c2cUserPartyCode}, '%'))
+      </if>
+
+       order by field(c2c_appeal.state, '1', '0') desc, c2c_appeal.create_time desc
+  </select>
+
+
+    <select id="findNoHandleAppealsCountByAdvertId" resultType="java.lang.Long">
+
+        select count(*) from t_c2c_appeal appeal left join t_c2c_order ord on appeal.order_no = ord.order_no where ord.c2c_advert_id = #{c2cAdvertId} and appeal.state = '0'
+    </select>
+</mapper>

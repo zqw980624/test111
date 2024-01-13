@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yami.trading.dao.c2c.C2cOrderMapper">
+
+    <select id="pagedQuery" resultType="java.util.HashMap">
+        select ord.uuid id, ord.party_id party_id, ord.order_no order_no, ord.state state, ord.direction direction,
+        ord.currency currency,
+        ord.symbol_value symbol_value, ord.coin_amount coin_amount, ord.amount amount, date_format(ord.create_time,
+        '%Y-%m-%d %h:%i:%s') create_time
+        from t_c2c_order ord where 1=1
+        <if test="direction!=null and direction!=''">
+            and ord.direction=#{direction}
+        </if>
+
+        <if test="state!=null and state!=''">
+            and ord.state=#{state}
+        </if>
+        <if test="party_id!=null and party_id!=''">
+            and ord.party_id=#{party_id}
+        </if>
+        order by ord.create_time desc
+    </select>
+
+
+    <select id="pagedBankCardOrderQuery" resultType="java.util.HashMap">
+        select
+        c2c_order.uuid id, c2c_order.c2c_user_id c2c_user_id, c2c_order.c2c_advert_id c2c_advert_id,
+        c2c_order.payment_method_id payment_method_id, c2c_order.order_type order_type, c2c_order.order_no order_no,
+        c2c_order.state state, c2c_order.c2c_user_type c2c_user_type,
+        c2c_order.c2c_user_code c2c_user_code, c2c_order.c2c_user_nick_name c2c_user_nick_name,
+        c2c_order.c2c_user_party_id c2c_user_party_id,
+        c2c_order.c2c_user_party_code c2c_user_party_code, c2c_order.c2c_user_party_name c2c_user_party_name,
+        c2c_order.direction direction,
+        c2c_order.nationality,
+        c2c_order.currency currency, c2c_order.symbol symbol, c2c_order.pay_rate pay_rate, c2c_order.symbol_value
+        symbol_value,
+        c2c_order.coin_amount_fee,
+        c2c_order.coin_amount coin_amount, c2c_order.expire_time expire_time, c2c_order.amount amount,
+        c2c_order.method_type method_type,
+        c2c_order.method_name method_name, c2c_order.method_img method_img, c2c_order.real_name real_name,
+        c2c_order.param_name1 param_name1, c2c_order.param_value1 param_value1, c2c_order.param_name2 param_name2,
+        c2c_order.param_value2 param_value2,
+        c2c_order.param_name3 param_name3, c2c_order.param_value3 param_value3, c2c_order.param_name4 param_name4,
+        c2c_order.param_value4 param_value4,
+        c2c_order.param_name5 param_name5, c2c_order.param_value5 param_value5, c2c_order.param_name6 param_name6,
+        c2c_order.param_value6 param_value6,
+        c2c_order.param_name7 param_name7, c2c_order.param_value7 param_value7, c2c_order.param_name8 param_name8,
+        c2c_order.param_value8 param_value8,
+        c2c_order.param_name9 param_name9, c2c_order.param_value9 param_value9, c2c_order.param_name10 param_name10,
+        c2c_order.param_value10 param_value10,
+        c2c_order.param_name11 param_name11, c2c_order.param_value11 param_value11, c2c_order.param_name12 param_name12,
+        c2c_order.param_value12 param_value12,
+        c2c_order.param_name13 param_name13, c2c_order.param_value13 param_value13, c2c_order.param_name14 param_name14,
+        c2c_order.param_value14 param_value14,
+        c2c_order.param_name15 param_name15, c2c_order.param_value15 param_value15,
+        c2c_order.qrcode qrcode, c2c_order.remark remark, c2c_order.create_time create_time, c2c_order.handle_time
+        handle_time,
+        c2c_order.img,
+        c2c_order.close_time close_time, c2c_order.pay_time pay_time, c2c_order.cancel_time cancel_time,
+        party.user_id party_id, party.user_code usercode, party.user_name username, party.role_name rolename
+
+        from t_c2c_order c2c_order
+        left join tz_user party on party.user_id = c2c_order.party_id
+        left join t_c2c_user c2c_user on c2c_user.uuid = c2c_order.c2c_user_id
+        where 1=1
+
+        <if test="state!=null and state!=''">
+            and c2c_order.state =#{state}
+        </if>
+
+        <if test="orderNo!=null and orderNo!=''">
+            and c2c_order.order_no =#{orderNo}
+        </if>
+        <if test="userCode!=null and userCode!=''">
+            and (party.user_name like CONCAT('%', #{userCode}, '%') or party.user_code like #{userCode})
+        </if>
+        <if test="roleName!=null and roleName!=''">
+            and party.role_name = #{userCode}
+        </if>
+
+        <if test="direction!=null and direction!=''">
+            and c2c_order.direction  in
+
+            <foreach collection="direction" item="item" index="no" open="("
+                     separator="," close=")">
+                #{item}
+            </foreach>
+
+        </if>
+          order by field(c2c_order.state, '4','3','0') desc, c2c_order.create_time desc
+
+    </select>
+
+    <select id="pagedC2cQuery" resultType="java.util.HashMap">
+        select c2c_order.uuid                id,
+               c2c_order.c2c_user_id         c2c_user_id,
+               c2c_order.c2c_advert_id       c2c_advert_id,
+               c2c_order.payment_method_id   payment_method_id,
+               c2c_order.order_type          order_type,
+               c2c_order.order_no            order_no,
+               c2c_order.state               state,
+               c2c_order.c2c_user_type       c2c_user_type,
+               c2c_order.c2c_user_code       c2c_user_code,
+               c2c_order.c2c_user_nick_name  c2c_user_nick_name,
+               c2c_order.c2c_user_party_id   c2c_user_party_id,
+               c2c_order.c2c_user_party_code c2c_user_party_code,
+               c2c_order.c2c_user_party_name c2c_user_party_name,
+               c2c_order.direction           direction,
+               c2c_order.currency            currency,
+               c2c_order.symbol              symbol,
+               c2c_order.pay_rate            pay_rate,
+               c2c_order.symbol_value        symbol_value,
+               c2c_order.coin_amount         coin_amount,
+               c2c_order.expire_time         expire_time,
+               c2c_order.amount              amount,
+               c2c_order.method_type         method_type,
+               c2c_order.method_name         method_name,
+               c2c_order.method_img          method_img,
+               c2c_order.real_name           real_name,
+               c2c_order.param_name1         param_name1,
+               c2c_order.param_value1        param_value1,
+               c2c_order.param_name2         param_name2,
+               c2c_order.param_value2        param_value2,
+               c2c_order.param_name3         param_name3,
+               c2c_order.param_value3        param_value3,
+               c2c_order.param_name4         param_name4,
+               c2c_order.param_value4        param_value4,
+               c2c_order.param_name5         param_name5,
+               c2c_order.param_value5        param_value5,
+               c2c_order.param_name6         param_name6,
+               c2c_order.param_value6        param_value6,
+               c2c_order.param_name7         param_name7,
+               c2c_order.param_value7        param_value7,
+               c2c_order.param_name8         param_name8,
+               c2c_order.param_value8        param_value8,
+               c2c_order.param_name9         param_name9,
+               c2c_order.param_value9        param_value9,
+               c2c_order.param_name10        param_name10,
+               c2c_order.param_value10       param_value10,
+               c2c_order.param_name11        param_name11,
+               c2c_order.param_value11       param_value11,
+               c2c_order.param_name12        param_name12,
+               c2c_order.param_value12       param_value12,
+               c2c_order.param_name13        param_name13,
+               c2c_order.param_value13       param_value13,
+               c2c_order.param_name14        param_name14,
+               c2c_order.param_value14       param_value14,
+               c2c_order.param_name15        param_name15,
+               c2c_order.param_value15       param_value15,
+               c2c_order.qrcode              qrcode,
+               c2c_order.remark              remark,
+               c2c_order.create_time         create_time,
+               c2c_order.handle_time         handle_time,
+               c2c_order.close_time          close_time,
+               c2c_order.pay_time            pay_time,
+               c2c_order.cancel_time         cancel_time,
+               party.user_id                 party_id,
+               party.user_code               usercode,
+               party.user_name               username,
+               party.role_name               rolename,
+               c2c_order.nationality
+
+        from t_c2c_order c2c_order
+                 left join tz_user party on party.user_id = c2c_order.party_id
+                 left join t_c2c_user c2c_user on c2c_user.uuid = c2c_order.c2c_user_id
+        where 1 = 1
+            <if test="state!=null and state!=''">
+                and c2c_order.state =#{state}
+            </if>
+
+            <if test="orderNo!=null and orderNo!=''">
+                and c2c_order.order_no =#{orderNo}
+            </if>
+            <if test="userCode!=null and userCode!=''">
+                and (party.user_name like CONCAT('%', #{userCode}, '%') or party.user_code = #{userCode})
+            </if>
+            <if test="roleName!=null and roleName!=''">
+                and party.role_name = #{userCode}
+            </if>
+            <if test="c2cUserCode!=null and c2cUserCode!=''">
+                and (c2c_order.c2c_user_nick_name like CONCAT('%', #{c2cUserCode}, '%') or c2c_order.c2c_user_code  like CONCAT('%', #{c2cUserCode}, '%')
+            </if>
+
+        <if test="c2cUserType!=null and c2cUserType!=''">
+            and c2c_order.c2c_user_type =#{c2cUserType}
+        </if>
+        <if test="c2cUserPartyCode!=null and c2cUserPartyCode!=''">
+            and (c2c_order.c2c_user_party_name  like CONCAT('%', #{c2cUserPartyCode}, '%')  or c2c_order.c2c_user_party_code like CONCAT('%', #{c2cUserPartyCode}, '%') )
+        </if>
+
+            <if test="direction!=null and direction!=''">
+                and c2c_order.direction  in
+
+                <foreach collection="direction" item="item" index="no" open="("
+                         separator="," close=")">
+                    #{item}
+                </foreach>
+
+            </if>
+        order by field(c2c_order.state, '0', '5', '2', '1') desc, c2c_order.create_time desc
+    </select>
+</mapper>
